@@ -7,15 +7,11 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import org.apache.http.protocol.HTTP;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -36,8 +32,8 @@ public class EditNoteActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_edit_note);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
-		
-	
+
+
 		titleEditText = (EditText)findViewById(R.id.titleEditText);
 		noteEditText = (EditText)findViewById(R.id.noteEditText);
 		final TextView dateEditText = (TextView)findViewById(R.id.dateEditText);
@@ -113,7 +109,7 @@ public class EditNoteActivity extends Activity {
 			editNote();
 			break;
 		case android.R.id.home:
-//			NavUtils.navigateUpFromSameTask(this);
+			//			NavUtils.navigateUpFromSameTask(this);
 			if (isAddingNote || isInEditMode)
 			{
 				noteNotSavedAlertDialog();
@@ -122,19 +118,31 @@ public class EditNoteActivity extends Activity {
 			finish();
 			break;
 		case R.id.shareNoteItem:
-			Intent emailIntent = new Intent(Intent.ACTION_SEND);
-			emailIntent.setType(HTTP.PLAIN_TEXT_TYPE);
-			emailIntent.putExtra(Intent.EXTRA_SUBJECT, titleEditText.getText().toString());
-			emailIntent.putExtra(Intent.EXTRA_TEXT, noteEditText.getText().toString());
-			String title = getResources().getString(R.string.share_this_note_via);
-			Intent chooser = Intent.createChooser(emailIntent, title);
-			if (emailIntent.resolveActivity(getPackageManager()) != null) 
-			{
-			    startActivity(chooser);
-			}
-			
+			shareNote();
+			break;
+
 		}
 		return true;
+	}
+
+	public void shareNote() {
+		Intent emailIntent = new Intent(Intent.ACTION_SEND);
+		emailIntent.setType("message/rfc822");
+		emailIntent.putExtra(Intent.EXTRA_SUBJECT, titleEditText.getText().toString());
+		emailIntent.putExtra(Intent.EXTRA_TEXT, noteEditText.getText().toString());
+		String title = getResources().getString(R.string.share_this_note_via);
+		try {
+			startActivity(Intent.createChooser(emailIntent, title));
+		} catch (android.content.ActivityNotFoundException ex) {
+			Toast.makeText(EditNoteActivity.this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+		}
+		//		PackageManager packageManager = getPackageManager();
+		//		List<ResolveInfo> activities = packageManager.queryIntentActivities(emailIntent, 0);
+		//		boolean isIntentSafe = activities.size() > 0;
+		//		if (isIntentSafe)
+		//		{
+		//			startActivity(emailIntent);
+		//		}
 	}
 
 	public void cancelActionButton() {
@@ -183,20 +191,20 @@ public class EditNoteActivity extends Activity {
 
 		builder.create().show();
 	}
-	
+
 	public void emptyTitleAlertDialog(){
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage(R.string.enter_a_title_please_);
 		builder.setTitle(R.string.empty_title);
 		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-			
+
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		});
-		
+
 		builder.create().show();
 	}
 
@@ -205,7 +213,7 @@ public class EditNoteActivity extends Activity {
 		builder.setMessage("Do you want to save changes before canceling?");
 		builder.setTitle("Save Note");
 		builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-			
+
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				// TODO Auto-generated method stub
@@ -213,7 +221,7 @@ public class EditNoteActivity extends Activity {
 			}
 		});
 		builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-			
+
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				// TODO Auto-generated method stub
@@ -221,10 +229,10 @@ public class EditNoteActivity extends Activity {
 				noteEditText.setText(noteOldState);
 			}
 		});
-		
+
 		builder.create().show();
 	}
-	
+
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		// TODO Auto-generated method stub
