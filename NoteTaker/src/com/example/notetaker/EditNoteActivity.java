@@ -136,13 +136,6 @@ public class EditNoteActivity extends Activity {
 		} catch (android.content.ActivityNotFoundException ex) {
 			Toast.makeText(EditNoteActivity.this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
 		}
-		//		PackageManager packageManager = getPackageManager();
-		//		List<ResolveInfo> activities = packageManager.queryIntentActivities(emailIntent, 0);
-		//		boolean isIntentSafe = activities.size() > 0;
-		//		if (isIntentSafe)
-		//		{
-		//			startActivity(emailIntent);
-		//		}
 	}
 
 	public void cancelActionButton() {
