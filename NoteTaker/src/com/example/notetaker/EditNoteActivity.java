@@ -75,13 +75,11 @@ public class EditNoteActivity extends Activity {
 		{
 			menu.removeItem(R.id.deleteNoteItem);
 			menu.removeItem(R.id.editNoteItem);
-			menu.removeItem(R.id.cancelItem);
 			menu.removeItem(R.id.shareNoteItem);
 		}
 		else if(isAddingNote == false && isInEditMode == false)
 		{
 			menu.removeItem(R.id.saveNoteItem);
-			menu.removeItem(R.id.cancelItem);
 		}
 		else if (isAddingNote == false && isInEditMode)
 		{
@@ -99,9 +97,6 @@ public class EditNoteActivity extends Activity {
 		case R.id.deleteNoteItem:
 			deleteAlertDialog();
 			break;
-		case R.id.cancelItem:
-			cancelActionButton();
-			break;
 		case R.id.saveNoteItem:
 			saveNote();
 			break;
@@ -109,13 +104,7 @@ public class EditNoteActivity extends Activity {
 			editNote();
 			break;
 		case android.R.id.home:
-			//			NavUtils.navigateUpFromSameTask(this);
-			if (isAddingNote || isInEditMode)
-			{
-				noteNotSavedAlertDialog();
-			}
-			setResult(RESULT_CANCELED, new Intent());
-			finish();
+			cancelNote();
 			break;
 		case R.id.shareNoteItem:
 			shareNote();
@@ -123,6 +112,36 @@ public class EditNoteActivity extends Activity {
 
 		}
 		return true;
+	}
+
+	public void cancelNote() {
+		if (isInEditMode)
+		{
+			isInEditMode = false;
+			if (isAddingNote == false)
+			{
+				if ((titleOldState.equals(titleEditText.getText().toString()) == false || 
+						noteOldState.equals(noteEditText.getText().toString()) == false))
+				{
+					noteNotSavedAlertDialog();
+				}
+				else
+				{
+					setResult(RESULT_CANCELED, new Intent());
+					finish();
+				}
+			}
+			else
+			{
+				noteNotSavedAlertDialog();
+			}
+			
+		}
+		else
+		{
+			setResult(RESULT_CANCELED, new Intent());
+			finish();
+		}
 	}
 
 	public void shareNote() {
@@ -138,17 +157,6 @@ public class EditNoteActivity extends Activity {
 		}
 	}
 
-	public void cancelActionButton() {
-		if (!titleOldState.equals(titleEditText.getText().toString()) || 
-				!noteOldState.equals(noteEditText.getText().toString()))
-		{
-			noteNotSavedAlertDialog();
-		}
-		isInEditMode = false;
-		titleEditText.setEnabled(isInEditMode);
-		noteEditText.setEnabled(isInEditMode);
-		invalidateOptionsMenu();
-	}
 
 	public void editNote() {
 		titleOldState = titleEditText.getText().toString();
@@ -181,7 +189,7 @@ public class EditNoteActivity extends Activity {
 
 			}
 		});
-
+		builder.setCancelable(false);
 		builder.create().show();
 	}
 
@@ -197,7 +205,7 @@ public class EditNoteActivity extends Activity {
 
 			}
 		});
-
+		builder.setCancelable(false);
 		builder.create().show();
 	}
 
@@ -218,11 +226,11 @@ public class EditNoteActivity extends Activity {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				// TODO Auto-generated method stub
-				titleEditText.setText(titleOldState);
-				noteEditText.setText(noteOldState);
+				setResult(RESULT_CANCELED, new Intent());
+				finish();
 			}
 		});
-
+		builder.setCancelable(false);
 		builder.create().show();
 	}
 
@@ -249,5 +257,14 @@ public class EditNoteActivity extends Activity {
 		invalidateOptionsMenu();
 		finish();
 	}
+
+	@Override
+	public void onBackPressed() {
+		// TODO Auto-generated method stub
+		cancelNote();
+//		super.onBackPressed();
+	}
+	
+	
 
 }

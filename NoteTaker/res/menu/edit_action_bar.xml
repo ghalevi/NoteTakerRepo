@@ -14,12 +14,6 @@
         android:title="@string/delete">
     </item>
     <item
-        android:id="@+id/cancelItem"
-        android:icon="@+drawable/ic_action_navigation_cancel"
-        android:showAsAction="ifRoom"
-        android:title="@string/cancel">
-    </item>
-    <item
         android:id="@+id/editNoteItem"
         android:icon="@+drawable/ic_action_note_edit"
         android:showAsAction="ifRoom"
